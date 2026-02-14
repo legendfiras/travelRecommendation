@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact Us - Travel Recommendation</title>
+  <link rel="stylesheet" href="travel_recommendation.css" />
+</head>
+<body>
+  <header class="navbar">
+    <div class="brand">
+      <div class="logo">✈</div>
+      <div class="brand-text">TravelBloom</div>
+    </div>
+
+    <nav class="nav-links">
+      <a class="nav-link" href="travel_recommendation.html">Home</a>
+      <a class="nav-link" href="about_us.html">About Us</a>
+      <a class="nav-link active" href="contact_us.html">Contact Us</a>
+    </nav>
+
+    <!-- IMPORTANT: no search bar/buttons here -->
+    <div class="nav-actions nav-actions--empty"></div>
+  </header>
+
+  <main class="page">
+    <section class="card">
+      <h1>Contact Us</h1>
+      <p>Use the form below to reach out.</p>
+
+      <form class="contact-form" onsubmit="return false;">
+        <label>
+          Name
+          <input type="text" placeholder="Your name" required />
+        </label>
+
+        <label>
+          Email
+          <input type="email" placeholder="Your email" required />
+        </label>
+
+        <label>
+          Message
+          <textarea rows="5" placeholder="Write your message..." required></textarea>
+        </label>
+
+        <button class="btn btn-primary" type="submit">Submit</button>
+      </form>
+    </section>
+  </main>
+</body>
+</html>
