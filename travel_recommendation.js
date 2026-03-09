@@ -1,15 +1,22 @@
 let apiData = null;
+let isLoading = false;
 
 async function loadData() {
   if (apiData) return apiData;
 
   try {
     const res = await fetch("travel_recommendation_api.json");
+    
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+    
     apiData = await res.json();
     console.log("Loaded JSON:", apiData); // Task 6 console.log requirement
     return apiData;
   } catch (err) {
     console.error("Failed to load JSON:", err);
+    showError("Failed to load travel data. Please refresh the page.");
     return null;
   }
 }
@@ -23,6 +30,23 @@ function clearResultsUI() {
   const emptyState = document.getElementById("emptyState");
 
   resultsDiv.innerHTML = "";
+  emptyState.style.display = "block";
+}
+
+function showLoadingState() {
+  const resultsDiv = document.getElementById("results");
+  const emptyState = document.getElementById("emptyState");
+  
+  resultsDiv.innerHTML = '<div style="text-align: center; padding: 40px; color: rgba(234,242,247,0.8);"><div class="loading-spinner"></div><p>Loading recommendations...</p></div>';
+  emptyState.style.display = "none";
+}
+
+function showError(message) {
+  const resultsDiv = document.getElementById("results");
+  const emptyState = document.getElementById("emptyState");
+  
+  resultsDiv.innerHTML = '';
+  emptyState.innerHTML = `<p style="color: #ff6b6b;">⚠️ ${message}</p>`;
   emptyState.style.display = "block";
 }
 
@@ -106,22 +130,45 @@ async function searchRecommendation() {
   const input = document.getElementById("searchInput");
   const keyword = normalizeKeyword(input.value);
 
-  const data = await loadData();
-  if (!data) return;
+  // Validate input
+  if (!keyword || keyword.length === 0) {
+    showError("Please enter a search term (try: beach, temple, or country)");
+    return;
+  }
 
-  // accept variations
-  const isBeach = keyword === "beach" || keyword === "beaches";
-  const isTemple = keyword === "temple" || keyword === "temples";
-  const isCountry = keyword === "country" || keyword === "countries";
+  // Prevent multiple simultaneous searches
+  if (isLoading) return;
+  
+  isLoading = true;
+  showLoadingState();
 
-  let results = [];
+  try {
+    const data = await loadData();
+    if (!data) return;
 
-  if (isBeach) results = buildBeachResults(data);
-  else if (isTemple) results = buildTempleResults(data);
-  else if (isCountry) results = buildCountryResults(data);
-  else results = []; // unknown keyword => empty
+    // accept variations
+    const isBeach = keyword === "beach" || keyword === "beaches";
+    const isTemple = keyword === "temple" || keyword === "temples";
+    const isCountry = keyword === "country" || keyword === "countries";
 
-  renderCards(results);
+    let results = [];
+
+    if (isBeach) results = buildBeachResults(data);
+    else if (isTemple) results = buildTempleResults(data);
+    else if (isCountry) results = buildCountryResults(data);
+    else {
+      showError(`No results found for "${keyword}". Try: beach, temple, or country`);
+      isLoading = false;
+      return;
+    }
+
+    renderCards(results);
+  } catch (err) {
+    console.error("Search failed:", err);
+    showError("An error occurred while searching. Please try again.");
+  } finally {
+    isLoading = false;
+  }
 }
 
 // Task 9: Clear button
@@ -130,7 +177,21 @@ function resetSearch() {
   clearResultsUI();
 }
 
+// Handle Enter key press in search input
+function handleKeyPress(event) {
+  if (event.key === 'Enter') {
+    event.preventDefault();
+    searchRecommendation();
+  }
+}
+
 // On load: empty state
 document.addEventListener("DOMContentLoaded", () => {
   clearResultsUI();
+  
+  // Auto-focus search input for better UX
+  const searchInput = document.getElementById("searchInput");
+  if (searchInput) {
+    searchInput.focus();
+  }
 });

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, minimum-scale=0.5" />
   <title>Travel Recommendation</title>
   <link rel="stylesheet" href="travel_recommendation.css" />
 </head>
@@ -15,13 +15,13 @@
     </div>
 
     <nav class="nav-links">
-      <a class="nav-link active" href="travel_recommendation.html">Home</a>
+      <a class="nav-link active" href="index.html">Home</a>
       <a class="nav-link" href="about_us.html">About Us</a>
       <a class="nav-link" href="contact_us.html">Contact Us</a>
     </nav>
 
     <div class="nav-actions">
-      <input id="searchInput" class="search-input" type="text" placeholder="Enter a destination or keyword" />
+      <input id="searchInput" class="search-input" type="text" placeholder="Enter a destination or keyword" onkeypress="handleKeyPress(event)" />
       <button class="btn btn-primary" onclick="searchRecommendation()">Search</button>
       <button class="btn btn-ghost" onclick="resetSearch()">Clear</button>
     </div>
